@@ -4,20 +4,25 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class EventListActivity extends ListActivity {
 
+    private MusicEvent musicEvent;
+    private MusicEventAdapter musicEventAdapter;
+
+    private ListView musicEventList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // set the adapter (which binds the ListView with the data in MusicEvent.java)
         //Since the data is an array, we use an ArrayAdapter:
+        setListAdapter(new ArrayAdapter(this,R.layout.music_event_list_item,m));
 
-        setListAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,MusicEvent.titles));
 
 
 
@@ -27,12 +32,27 @@ public class EventListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id)
     {
-        String title = MusicEvent.titles[pos];
-        String details = MusicEvent.details[pos];
+        String title = musicEvent.getTitle();
+        String date = musicEvent.getDate() ;
+        String day = musicEvent.getDay();
+        String time = musicEvent.getTime();
+        String location = musicEvent.getLocation();
+        String address1 = musicEvent.getAddress1();
+        String address2 = musicEvent.getAddress2();
+
+
+
+
 
         Intent detailsIntent = new Intent(this,EventDetailsActivity.class);
         detailsIntent.putExtra("Title",title);
-        detailsIntent.putExtra("Details",details);
+        detailsIntent.putExtra("Date",date);
+        detailsIntent.putExtra("Day",day);
+        detailsIntent.putExtra("Time",time);
+        detailsIntent.putExtra("Location",location);
+        detailsIntent.putExtra("Address1",address1);
+        detailsIntent.putExtra("Address2",address2);
+
 
     startActivity(detailsIntent);
 
