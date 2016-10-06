@@ -1,19 +1,24 @@
 package edu.orangecoastcollege.cs273.ocmusicevents;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class EventListActivity extends ListActivity {
 
-    private MusicEvent musicEvent;
-    private MusicEventAdapter musicEventAdapter;
+    private Context context = this;
 
-    private ListView musicEventList;
+    private ListView eventListView;
+    private ArrayList<MusicEvent> allMusicEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,38 +26,33 @@ public class EventListActivity extends ListActivity {
 
         // set the adapter (which binds the ListView with the data in MusicEvent.java)
         //Since the data is an array, we use an ArrayAdapter:
-        setListAdapter(new ArrayAdapter(this,R.layout.music_event_list_item,m));
+        eventListView = (ListView) findViewById(R.id.eventsListView);
+
+        try {
+            allMusicEvent = JSONLoader.loadJSONFromAsset(context);
+        } catch (IOException ex) {
+            Log.e("OC Music Events", "Error loading JSON data." + ex.getMessage());
+        }
+    setListAdapter(new MusicEventAdapter(this,R.layout.music_event_list_item,allMusicEvent));
 
 
-
-
-        //setContentView(R.layout.activity_event_list);
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id)
     {
-        String title = musicEvent.getTitle();
-        String date = musicEvent.getDate() ;
-        String day = musicEvent.getDay();
-        String time = musicEvent.getTime();
-        String location = musicEvent.getLocation();
-        String address1 = musicEvent.getAddress1();
-        String address2 = musicEvent.getAddress2();
-
-
-
-
-
         Intent detailsIntent = new Intent(this,EventDetailsActivity.class);
-        detailsIntent.putExtra("Title",title);
-        detailsIntent.putExtra("Date",date);
-        detailsIntent.putExtra("Day",day);
-        detailsIntent.putExtra("Time",time);
-        detailsIntent.putExtra("Location",location);
-        detailsIntent.putExtra("Address1",address1);
-        detailsIntent.putExtra("Address2",address2);
 
+        MusicEvent selectedEvent = allMusicEvent.get(pos);
+
+        detailsIntent.putExtra("Title",selectedEvent.getTitle());
+        detailsIntent.putExtra("Date",selectedEvent.getDate());
+        detailsIntent.putExtra("Day",selectedEvent.getDay());
+        detailsIntent.putExtra("Time",selectedEvent.getTime());
+        detailsIntent.putExtra("Location",selectedEvent.getLocation());
+        detailsIntent.putExtra("Address1",selectedEvent.getAddress1());
+        detailsIntent.putExtra("Address2",selectedEvent.getAddress2());
+    detailsIntent.putExtra("ImageName",selectedEvent.getImageName());
 
     startActivity(detailsIntent);
 
